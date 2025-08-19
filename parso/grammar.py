@@ -258,7 +258,10 @@ def load_grammar(*, version: str = None, path: str = None):
             grammar = PythonGrammar(version_info, bnf_text)
             return _loaded_grammars.setdefault(path, grammar)
         except FileNotFoundError:
-            message = "Python version %s.%s is currently not supported." % (
-                version_info.major, version_info.minor
-            )
-            raise NotImplementedError(message)
+            path = os.path.join(os.path.dirname(__file__), 'python', 'grammar-latest.txt')
+            with open(path) as f:
+                bnf_text = f.read()
+
+            import sys
+            grammar = PythonGrammar(sys.version_info, bnf_text)
+            return _loaded_grammars.setdefault(path, grammar)
